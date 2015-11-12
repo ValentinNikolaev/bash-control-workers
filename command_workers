@@ -28,17 +28,17 @@ fi
 
 case "$1" in
                "kall")
-                    pkill -f "queuemail"
-                    pkill -f "queue_workers"
+                    killProcess "queuemail"
+                    killProcess "queue_workers"
                     ;;
                "krecievers")
-                    pkill -f "queuemailreceiver"
+                    killProcess "queuemailreceiver"
                     ;;
                "ksenders")
-                     pkill -f "queuemailsender"
+                     killProcess "queuemailsender"
                      ;;
                "kupdaters")
-                     pkill -f "queuemailupdaterstatus"
+                     killProcess "queuemailupdaterstatus"
                      ;;
                "ps")
                      ps aux | grep 'console.php' | grep -v 'grep'
@@ -48,11 +48,11 @@ case "$1" in
                      rabbitmqctl list_queues
                      ;;
                "kdispatcher")
-                     pkill -f "queue_workers"
+                     killProcess "queue_workers"
                      ;;
                "restart")
-                      pkill -f "queuemail"
-                      pkill -f "queue_workers"
+                      killProcess "queuemail"
+                      killProcess "queue_workers"
                       startBashCommand "queue_workers"
                      ;;
                *)

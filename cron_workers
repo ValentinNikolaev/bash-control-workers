@@ -10,7 +10,7 @@ checkScriptParams
 for processName in "$LIST_WORKERS"
 do
     PROCESS_RUN=0
-    PROCESS_COUNTER=$(ps xao command | grep $processName  | grep -v 'grep' | wc -l)
+    PROCESS_COUNTER=$(getProcessCounter $processName)
 
     if [ -z "$PROCESS_COUNTER" ]
     then
@@ -18,15 +18,9 @@ do
     else
         if [[ $PROCESS_COUNTER -gt 1 ]]
         then
-            echo "Too many $processName - $PROCESS_COUNTER. Kill them and start new"
-            ps -ef | grep "queue_workers" | grep -v 'grep'  | awk '{print $2}'
-            PROCESSES=$(ps -ef | grep $processName  | grep -v 'grep' | awk '{print $2}')
-            for processSID in "$PROCESSES"
-            do
-                kill -9 $processSID
-            done
             startBashCommand "$processName"
         else
+            killProcess $processName
             echo "$processName running."
         fi
     fi

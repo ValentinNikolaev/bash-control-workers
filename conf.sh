@@ -40,24 +40,49 @@ startBashCommand() {
     then
         echo "Missing worker name"  # Or no parameter passed.
         exit 1
-    else
-        echo "Running worker $1"
     fi
-    local processName=$1
-    echo "$processName is not running. Starting..";
+    local PROCESS_NAME=$1
+    local PROCESS_RUN=0
+
     for WORKERS_DIR in $WORKERS_DIR_LIST
     do
         if [[ -d "$WORKERS_DIR" ]]; then
-            if [[ -f "$WORKERS_DIR/${processName}" ]]; then
+            if [[ -f "$WORKERS_DIR/${PROCESS_NAME}" ]]; then
                 PROCESS_RUN=1;
-                bash "$WORKERS_DIR/${processName}" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
+                bash "$WORKERS_DIR/${PROCESS_NAME}" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
                 break;
             fi
         fi
-
-        if [ $PROCESS_RUN -eq 0 ]; then
-            echo "$processName failed to start";
-        fi
     done
+    if [ ${PROCESS_RUN} -eq 0 ]; then
+        echo "$PROCESS_NAME failed to start";
+    fi
 }
 
+getProcessCounter() {
+    if [ -z "$1" ]
+    then
+        echo "Missing process name"  # Or no parameter passed.
+        exit 1
+    fi
+    ps xao command | grep $1  | grep -v 'grep' | wc -l
+    return 1
+}
+
+killProcess() {
+    if [ -z "$1" ]
+    then
+        echo "Missing process name"  # Or no parameter passed.
+        exit 1
+    fi
+
+    PROCESS_COUNTER=$(getProcessCounter $1)
+    if [[ $PROCESS_COUNTER -gt 1 ]]
+    then
+        PROCESSES=$(ps -ef | grep $processName  | grep -v 'grep' | awk '{print $2}')
+        for processSID in "$PROCESSES"
+        do
+            kill -9 $processSID
+        done
+    fi
+}
