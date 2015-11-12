@@ -44,7 +44,6 @@ startBashCommand() {
     fi
     local PROCESS_NAME=$1
     local PROCESS_RUN=0
-
     for WORKERS_DIR in $WORKERS_DIR_LIST
     do
         if [[ -d "$WORKERS_DIR" ]]; then
