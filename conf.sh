@@ -50,6 +50,7 @@ startBashCommand() {
         if [[ -d "$WORKERS_DIR" ]]; then
             if [[ -f "$WORKERS_DIR/${PROCESS_NAME}" ]]; then
                 PROCESS_RUN=1;
+                echo "Running $WORKERS_DIR/${PROCESS_NAME} >> $WORKERS_DIR$LOGFILE$PROCESS_NAME 2>> $WORKERS_DIR$LOGFILEERROR$PROCESS_NAME"
                 bash "$WORKERS_DIR/${PROCESS_NAME}" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
                 break;
             fi
@@ -78,11 +79,16 @@ killProcess() {
     fi
 
     PROCESS_COUNTER=$(getProcessCounter $1)
-    if [[ $PROCESS_COUNTER -gt 1 ]]
+    if [ -z "$PROCESS_COUNTER"  -o $PROCESS_COUNTER -eq 0 ]
     then
-        PROCESSES=$(ps -ef | grep "$processName"  | grep -v 'grep' | awk '{print $2}')
+        echo "Already killed '$1'"
+    else
+        PROCESSES=$(ps -ef | grep "$1"  | grep -v 'grep' | awk '{print $2}')
+
         for processSID in "$PROCESSES"
         do
+            echo "$1[pid $processSID] killing..."
+            echo "Killing pid $processSID..."
             kill -9 $processSID
         done
     fi

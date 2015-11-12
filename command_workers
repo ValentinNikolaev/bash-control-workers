@@ -18,6 +18,7 @@ commandList() {
     echo "restart - restart workers"
     echo "ps - get workers list"
     echo "rabbit_lq - equialent for rabbitmqctl list_queues"
+    echo "rabbit_restart - equialent for  service rabbitmq-server restart"
 }
 
 if [ -z "$1" ]
@@ -43,9 +44,11 @@ case "$1" in
                "ps")
                      ps aux | grep 'console.php' | grep -v 'grep'
                      ;;
-
                "rabbit_lq")
                      rabbitmqctl list_queues
+                     ;;
+               "rabbit_lq")
+                     service rabbitmq-server restart
                      ;;
                "kdispatcher")
                      killProcess "queue_workers"
