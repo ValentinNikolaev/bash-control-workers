@@ -9,12 +9,12 @@ LIST_WORKERS="queue_workers"
 
 checkScriptParams() {
     if [[ $(id -u) == 0 ]]; then
-      if [[ -z "$SUDO_COMMAND" ]]; then
-        zecho 'Please, use sudo'
+        if [[ -z "$SUDO_COMMAND" ]]; then
+            echo 'Please, use sudo'
         exit;
         fi
     else  echo 'Please, use sudo or login as root'
-      exit 1
+        exit 1
     fi
 
     if [ -z "$WORKERS_DIR_LIST" ]
@@ -24,66 +24,66 @@ checkScriptParams() {
     fi
 
     if [ -z "$LOGFILE" ]
-       then
+        then
             echo "Empty LOGFILE";
-       exit 1
+        exit 1
     fi
 
     if [ -z "$LOGFILEERROR" ]
-       then
+        then
             echo "Empty LOGFILEERROR";
-       exit 1
+        exit 1
     fi
 }
 
 startWorker() {
-   if [ -z "$1" ]
-   then
-    echo "Missing worker name"  # Or no parameter passed.
-     exit 1
-   else
-    echo "Running worker $1"
-   fi
-   local processName=$1
-   echo "$processName is not running. Starting..";
-            for WORKERS_DIR in $WORKERS_DIR_LIST
-            do
-                if [[ -d "$WORKERS_DIR" ]]; then
-                    if [[ -f "$WORKERS_DIR/${processName}" ]]; then
-                        PROCESS_RUN=1;
-                        bash "$WORKERS_DIR/${processName}" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
-                        break;
-                    fi
-                fi
-            done
+    if [ -z "$1" ]
+    then
+        echo "Missing worker name"  # Or no parameter passed.
+        exit 1
+    else
+        echo "Running worker $1"
+    fi
+    local processName=$1
+    echo "$processName is not running. Starting..";
+    for WORKERS_DIR in $WORKERS_DIR_LIST
+    do
+        if [[ -d "$WORKERS_DIR" ]]; then
+            if [[ -f "$WORKERS_DIR/${processName}" ]]; then
+                PROCESS_RUN=1;
+                bash "$WORKERS_DIR/${processName}" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
+                break;
+            fi
+        fi
 
-             if [ $PROCESS_RUN -eq 0 ]; then
-                echo "$processName failed to start";
-             fi
+        if [ $PROCESS_RUN -eq 0 ]; then
+            echo "$processName failed to start";
+        fi
+    done
 }
 
 for processName in "$LIST_WORKERS"
 do
-     PROCESS_RUN=0
-     PROCESS_COUNTER=$(ps xao command | grep $processName  | grep -v 'grep' | wc -l)
+    PROCESS_RUN=0
+    PROCESS_COUNTER=$(ps xao command | grep $processName  | grep -v 'grep' | wc -l)
 
-     if [ -z "$PROCESS_COUNTER" ]
-        then
-            startWorker "$processName"
-     else
+    if [ -z "$PROCESS_COUNTER" ]
+    then
+        startWorker "$processName"
+    else
         if [[ $PROCESS_COUNTER -gt 1 ]]
-            then
-                echo "Too many $processName - $PROCESS_COUNTER. Kill them and start new"
-                ps -ef | grep "queue_workers" | grep -v 'grep'  | awk '{print $2}'
-                PROCESSES=$(ps -ef | grep $processName  | grep -v 'grep' | awk '{print $2}')
-                for processSID in "$PROCESSES"
-                do
-                    kill -9 $processSID
-                done
-                startWorker "$processName"
-            else
-                echo "$processName running."
-            fi
-     fi
+        then
+            echo "Too many $processName - $PROCESS_COUNTER. Kill them and start new"
+            ps -ef | grep "queue_workers" | grep -v 'grep'  | awk '{print $2}'
+            PROCESSES=$(ps -ef | grep $processName  | grep -v 'grep' | awk '{print $2}')
+            for processSID in "$PROCESSES"
+            do
+                kill -9 $processSID
+            done
+            startWorker "$processName"
+        else
+            echo "$processName running."
+        fi
+    fi
 done
 
