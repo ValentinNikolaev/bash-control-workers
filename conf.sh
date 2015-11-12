@@ -3,7 +3,8 @@
 LOGFILE="/logs/lime-log-command-";
 LOGFILEERROR="/logs/lime-log-error-command-";
 WORKERS_DIR_LIST="/var/www/html/bash
-/var/www/public_html/bash";
+/var/www/public_html/bash
+/home/valentin/development/webservices/public_html/limesurvey/bash";
 
 LIST_WORKERS="queue_workers"
 
@@ -79,7 +80,7 @@ killProcess() {
     PROCESS_COUNTER=$(getProcessCounter $1)
     if [[ $PROCESS_COUNTER -gt 1 ]]
     then
-        PROCESSES=$(ps -ef | grep $processName  | grep -v 'grep' | awk '{print $2}')
+        PROCESSES=$(ps -ef | grep "$processName"  | grep -v 'grep' | awk '{print $2}')
         for processSID in "$PROCESSES"
         do
             kill -9 $processSID
