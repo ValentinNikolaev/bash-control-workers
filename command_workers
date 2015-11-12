@@ -1,0 +1,123 @@
+#!/bin/bash
+
+LOGFILE="/logs/lime-log-command-";
+LOGFILEERROR="/logs/lime-log-error-command-";
+WORKERS_DIR_LIST="/var/www/html/bash
+/var/www/public_html/bash";
+
+commandList() {
+    echo "SUDO REQUIRED!!!"
+    echo "Command list:"
+    echo "kall - Kill all workers and command disatcher"
+    echo "krecievers - Kill reciever workers"
+    echo "ksenders - Kill sender workers"
+    echo "kupdaters - Kill updaters workers"
+    echo "kdispatcher - Kill command dispatcher"
+    echo "restart - restart workers"
+    echo "ps - get workers list"
+    echo "rabbit_lq - equialent for rabbitmqctl list_queues"
+}
+
+checkScriptParams() {
+    if [[ $(id -u) == 0 ]]; then
+      if [[ -z "$SUDO_COMMAND" ]]; then
+        zecho 'Please, use sudo'
+        exit;
+        fi
+    else  echo 'Please, use sudo or login as root'
+      exit 1
+    fi
+
+    if [ -z "$WORKERS_DIR_LIST" ]
+       then
+            echo "Empty WORKERS_DIR_LIST";
+       exit 1
+    fi
+
+    if [ -z "$LOGFILE" ]
+       then
+            echo "Empty LOGFILE";
+       exit 1
+    fi
+
+    if [ -z "$LOGFILEERROR" ]
+       then
+            echo "Empty LOGFILEERROR";
+       exit 1
+    fi
+}
+
+startBashCommand() {
+    # check for 1st argument. Php call back. I.e. worker
+   local PROCESS_RUN=0
+   if [ -z "$1" ]
+   then
+     printf "Missing bash command as argumnet for function \n"  # Or no parameter passed.
+     exit 1
+   fi
+
+
+                echo "Starting $1..";
+                for WORKERS_DIR in $WORKERS_DIR_LIST
+                do
+                    if [[ -d "$WORKERS_DIR" ]]; then
+                        if [[ -f "$WORKERS_DIR/$1" ]]; then
+                            PROCESS_RUN=1
+                            bash "$WORKERS_DIR/$1" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
+                            break;
+                        fi
+                    fi
+                done
+
+                 if [ $PROCESS_RUN -eq 0 ]; then
+                    echo "$1 failed to start";
+                    else
+                    PROCESS_RUN=0
+                 fi
+
+}
+
+
+
+checkScriptParams
+if [ -z "$1" ]
+   then
+        commandList
+   exit 1
+fi
+
+case "$1" in
+               "kall")
+                    pkill -f "queuemail"
+                    pkill -f "queue_workers"
+                    ;;
+               "krecievers")
+                    pkill -f "queuemailreceiver"
+                    ;;
+               "ksenders")
+                     pkill -f "queuemailsender"
+                     ;;
+               "kupdaters")
+                     pkill -f "queuemailupdaterstatus"
+                     ;;
+               "ps")
+                     ps aux | grep 'console.php' | grep -v 'grep'
+                     ;;
+
+               "rabbit_lq")
+                     rabbitmqctl list_queues
+                     ;;
+               "kdispatcher")
+                     pkill -f "queue_workers"
+                     ;;
+               "restart")
+                      pkill -f "queuemail"
+                      pkill -f "queue_workers"
+                      startBashCommand "queue_workers"
+                     ;;
+               *)
+                     commandList
+                     ;;
+            esac
+
+
