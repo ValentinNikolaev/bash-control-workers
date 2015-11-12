@@ -1,63 +1,11 @@
 #!/bin/bash
 
-LOGFILE="/logs/lime-log-command-";
-LOGFILEERROR="/logs/lime-log-error-command-";
-WORKERS_DIR_LIST="/var/www/html/bash
-/var/www/public_html/bash";
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/conf.sh"
 
-LIST_WORKERS="queue_workers"
-
-checkScriptParams() {
-    if [[ $(id -u) == 0 ]]; then
-        if [[ -z "$SUDO_COMMAND" ]]; then
-            echo 'Please, use sudo'
-            exit;
-        fi
-    else  echo 'Please, use sudo or login as root'
-        exit 1
-    fi
-
-    if [ -z "$WORKERS_DIR_LIST" ]; then
-       echo "Empty WORKERS_DIR_LIST";
-       exit 1
-    fi
-
-    if [ -z "$LOGFILE" ]; then
-       echo "Empty LOGFILE";
-       exit 1
-    fi
-
-    if [ -z "$LOGFILEERROR" ]; then
-       echo "Empty LOGFILEERROR";
-       exit 1
-    fi
-}
-
-startWorker() {
-    if [ -z "$1" ]
-    then
-        echo "Missing worker name"  # Or no parameter passed.
-        exit 1
-    else
-        echo "Running worker $1"
-    fi
-    local processName=$1
-    echo "$processName is not running. Starting..";
-    for WORKERS_DIR in $WORKERS_DIR_LIST
-    do
-        if [[ -d "$WORKERS_DIR" ]]; then
-            if [[ -f "$WORKERS_DIR/${processName}" ]]; then
-                PROCESS_RUN=1;
-                bash "$WORKERS_DIR/${processName}" >> $WORKERS_DIR$LOGFILE$1 2>> $WORKERS_DIR$LOGFILEERROR$1 &
-                break;
-            fi
-        fi
-
-        if [ $PROCESS_RUN -eq 0 ]; then
-            echo "$processName failed to start";
-        fi
-    done
-}
+checkSudo
+checkScriptParams
 
 for processName in "$LIST_WORKERS"
 do
@@ -66,7 +14,7 @@ do
 
     if [ -z "$PROCESS_COUNTER" ]
     then
-        startWorker "$processName"
+        startBashCommand "$processName"
     else
         if [[ $PROCESS_COUNTER -gt 1 ]]
         then
@@ -77,7 +25,7 @@ do
             do
                 kill -9 $processSID
             done
-            startWorker "$processName"
+            startBashCommand "$processName"
         else
             echo "$processName running."
         fi
