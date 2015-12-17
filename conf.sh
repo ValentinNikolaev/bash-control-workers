@@ -16,15 +16,26 @@ msg() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" >&2
 }
 
+
+#######################################
+# Check if script run by owner
+# Globals:
+#   SUDO_COMMAND
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+
 checkSudo() {
-    if [[ $(id -u) == 0 ]]; then
-        if [[ -z "$SUDO_COMMAND" ]]; then
-            msg 'Please, use sudo'
-            exit;
-        fi
-    else  msg 'Please, use sudo or login as root'
+  if [[ $(id -u) == 0 ]]; then
+    if [[ -z "$SUDO_COMMAND" ]]; then
+      msg 'Please, use sudo'
         exit 1
-    fi
+      fi
+  else  msg 'Please, use sudo or login as root'
+    exit 1
+  fi
 }
 
 checkScriptParams() {
