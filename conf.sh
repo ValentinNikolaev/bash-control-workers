@@ -1,21 +1,11 @@
 #!/usr/bin/env bash
 
-# path for log file
-LOGFILE="/logs/lime-log-command-";
-# path for log-error file
-LOGFILEERROR="/logs/lime-log-error-command-";
-# php workers directory
-# i.e.
-# "/var/www/html/bash
-# /var/development/html/bash"
-WORKERS_DIR_LIST="/var/www/html/bash";
-# php worker names. The same formatting as WORKERS_DIR_LIST
-LIST_WORKERS="queue_workers"
-
+#######################################
+# Echo txt with date time
+#######################################
 msg() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" >&2
 }
-
 
 #######################################
 # Check if script run by owner
@@ -27,7 +17,7 @@ msg() {
 #   None
 #######################################
 
-checkSudo() {
+check_sudo() {
   if [[ $(id -u) == 0 ]]; then
     if [[ -z "$SUDO_COMMAND" ]]; then
       msg 'Please, use sudo'
@@ -52,7 +42,7 @@ checkSudo() {
 #   None
 #######################################
 
-checkScriptParams() {
+check_script_params() {
   if [ -z "$WORKERS_DIR_LIST" ]; then
     msg "Empty WORKERS_DIR_LIST";
     exit 1
@@ -89,7 +79,7 @@ checkScriptParams() {
 #   None
 #######################################
 
-startBashCommand() {
+start_bash_command() {
   if [ -z "$1" ]; then
     msg "Missing worker name"  # Or no parameter passed.
     exit 1
@@ -118,7 +108,7 @@ startBashCommand() {
 # Returns:
 #   process count
 #######################################
-getProcessCounter() {
+get_process_counter() {
   if [ -z "$1" ];  then
     msg "Missing process name"  # Or no parameter passed.
     exit 1
@@ -136,12 +126,12 @@ getProcessCounter() {
 # Returns:
 #   None
 #######################################
-killProcess() {
+kill_process() {
   if [ -z "$1" ]; then
     msg "Missing process name"  # Or no parameter passed.
     exit 1
   fi
-  local PROCESS_COUNTER=$(getProcessCounter $1)
+  local PROCESS_COUNTER=$(get_process_counter $1)
   if [ -z "$PROCESS_COUNTER"  -o $PROCESS_COUNTER -eq 0 ]; then
     msg "'$1' already Already killed"
   else
@@ -153,5 +143,19 @@ killProcess() {
     done
   fi
 }
+
+#######################################
+
+# path for log file
+LOGFILE="/logs/lime-log-command-";
+# path for log-error file
+LOGFILEERROR="/logs/lime-log-error-command-";
+# php workers directory
+# i.e.
+# "/var/www/html/bash
+# /var/development/html/bash"
+WORKERS_DIR_LIST="/var/www/html/bash";
+# php worker names. The same formatting as WORKERS_DIR_LIST
+LIST_WORKERS="queue_workers"
 
 

@@ -18,8 +18,8 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/conf.sh"
 
-checkSudo
-checkScriptParams
+check_sudo
+check_script_params
 
 if [ -z "$1" ]; then
     command_list
@@ -28,17 +28,17 @@ fi
 
 case "$1" in
   "kall")
-    killProcess "queuemail"
-    killProcess "queue_workers"
+    kill_process "queuemail"
+    kill_process "queue_workers"
     ;;
   "krecievers")
-    killProcess "queuemailreceiver"
+    kill_process "queuemailreceiver"
     ;;
   "ksenders")
-    killProcess "queuemailsender"
+    kill_process "queuemailsender"
     ;;
   "kupdaters")
-     killProcess "queuemailupdaterstatus"
+     kill_process "queuemailupdaterstatus"
      ;;
   "ps")
      ps aux | grep 'console.php' | grep -v 'grep'
@@ -50,12 +50,12 @@ case "$1" in
     service rabbitmq-server restart
     ;;
   "kdispatcher")
-    killProcess "queue_workers"
+    kill_process "queue_workers"
     ;;
   "restart")
-    killProcess "queuemail"
-    killProcess "queue_workers"
-    startBashCommand "queue_workers"
+    kill_process "queuemail"
+    kill_process "queue_workers"
+    start_bash_command "queue_workers"
     ;;
   *)
     command_list

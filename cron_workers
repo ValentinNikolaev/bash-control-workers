@@ -4,19 +4,19 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/conf.sh"
 
-checkSudo
-checkScriptParams
+check_sudo
+check_script_params
 
 for process_name in "$LIST_WORKERS"; do
   process_run=0
-  process_counter=$(getProcessCounter $process_name)
+  process_counter=$(get_process_counter $process_name)
   if [ -z "$process_counter" ]; then
-    startBashCommand "$process_name"
+    start_bash_command "$process_name"
   else
     if [[ $process_counter -gt 1 ]]; then
-      startBashCommand "$process_name"
+      start_bash_command "$process_name"
     else
-      killProcess $process_name
+      kill_process $process_name
       msg "$process_name running."
     fi
   fi
