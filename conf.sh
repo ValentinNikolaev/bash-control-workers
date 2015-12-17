@@ -71,8 +71,8 @@ check_script_params() {
 #   LOGFILE
 #   LOGFILEERROR
 # Locals:
-#   PROCESS_NAME
-#   PROCESS_RUN
+#   process_name
+#   process_run
 # Arguments:
 #   worker name (process name need to start)
 # Returns:
@@ -84,20 +84,20 @@ start_bash_command() {
     msg "Missing worker name"  # Or no parameter passed.
     exit 1
   fi
-  local PROCESS_NAME=$1
-  local PROCESS_RUN=0
-  for WORKERS_DIR in $WORKERS_DIR_LIST; do
-    if [[ -d "$WORKERS_DIR" ]]; then
-      if [[ -f "$WORKERS_DIR/${PROCESS_NAME}" ]]; then
-        PROCESS_RUN=1;
-        msg "Running $WORKERS_DIR/${PROCESS_NAME} >> $WORKERS_DIR$LOGFILE$PROCESS_NAME 2>> $WORKERS_DIR$LOGFILEERROR$PROCESS_NAME"
-        bash "$WORKERS_DIR/${PROCESS_NAME}" >> $WORKERS_DIR$LOGFILE$PROCESS_NAME 2>> $WORKERS_DIR$LOGFILEERROR$PROCESS_NAME &
+  local process_name=$1
+  local process_run=0
+  for workers_dir in $WORKERS_DIR_LIST; do
+    if [[ -d "$workers_dir" ]]; then
+      if [[ -f "$workers_dir/${process_name}" ]]; then
+        process_run=1;
+        msg "Running $workers_dir/${process_name} >> $workers_dir$LOGFILE$process_name 2>> $workers_dir$LOGFILEERROR$process_name"
+        bash "$workers_dir/${process_name}" >> $workers_dir$LOGFILE$process_name 2>> $workers_dir$LOGFILEERROR$process_name &
         break;
       fi
     fi
   done
-  if [ ${PROCESS_RUN} -eq 0 ]; then
-    msg "$PROCESS_NAME failed to start";
+  if [ ${process_run} -eq 0 ]; then
+    msg "$process_name failed to start";
   fi
 }
 
@@ -120,7 +120,7 @@ get_process_counter() {
 #######################################
 # Kill process by name
 # Locals:
-#   PROCESS_COUNTER
+#   process_counter
 # Arguments:
 #   process name to kill
 # Returns:
@@ -131,15 +131,15 @@ kill_process() {
     msg "Missing process name"  # Or no parameter passed.
     exit 1
   fi
-  local PROCESS_COUNTER=$(get_process_counter $1)
-  if [ -z "$PROCESS_COUNTER"  -o $PROCESS_COUNTER -eq 0 ]; then
+  local process_counter=$(get_process_counter $1)
+  if [ -z "$process_counter"  -o $process_counter -eq 0 ]; then
     msg "'$1' already Already killed"
   else
-    PROCESSES=$(ps -ef | grep "$1"  | grep -v 'grep' | awk '{print $2}')
-    for processSID in "$PROCESSES"; do
-      msg "$1[pid $processSID] killing..."
-      msg "Killing pid $processSID..."
-      kill -9 $processSID
+    local processes=$(ps -ef | grep "$1"  | grep -v 'grep' | awk '{print $2}')
+    for process_sid in "$processes"; do
+      msg "$1[pid $process_sid] killing..."
+      msg "Killing pid $process_sid..."
+      kill -9 $process_sid
     done
   fi
 }
