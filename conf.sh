@@ -38,26 +38,39 @@ checkSudo() {
   fi
 }
 
+#######################################
+# Check needed script default params
+# Globals:
+#   WORKERS_DIR_LIST
+#   LOGFILE
+#   LOGFILEERROR
+#   LIST_WORKERS
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+
 checkScriptParams() {
-    if [ -z "$WORKERS_DIR_LIST" ]; then
-       msg "Empty WORKERS_DIR_LIST";
-       exit 1
-    fi
+  if [ -z "$WORKERS_DIR_LIST" ]; then
+    msg "Empty WORKERS_DIR_LIST";
+    exit 1
+  fi
 
-    if [ -z "$LOGFILE" ]; then
-       msg "Empty LOGFILE";
-       exit 1
-    fi
+  if [ -z "$LOGFILE" ]; then
+    msg "Empty LOGFILE";
+    exit 1
+  fi
 
-    if [ -z "$LOGFILEERROR" ]; then
-       msg "Empty LOGFILEERROR";
-       exit 1
-    fi
+  if [ -z "$LOGFILEERROR" ]; then
+    msg "Empty LOGFILEERROR";
+    exit 1
+  fi
 
-    if [ -z "$LIST_WORKERS" ]; then
-       msg "Empty LIST_WORKERS";
-       exit 1
-    fi
+  if [ -z "$LIST_WORKERS" ]; then
+    msg "Empty LIST_WORKERS";
+    exit 1
+  fi
 }
 
 startBashCommand() {
