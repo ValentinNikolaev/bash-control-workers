@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+# path for log file
 LOGFILE="/logs/lime-log-command-";
+# path for log-error file
 LOGFILEERROR="/logs/lime-log-error-command-";
-WORKERS_DIR_LIST="/var/www/html/bash
-/var/www/public_html/bash
-/home/valentin/development/webservices/public_html/limesurvey/bash";
-
+# php workers directory
+# i.e.
+# "/var/www/html/bash
+# /var/development/html/bash"
+WORKERS_DIR_LIST="/var/www/html/bash";
+# php worker names. The same formatting as WORKERS_DIR_LIST
 LIST_WORKERS="queue_workers"
 
 checkSudo() {
@@ -32,6 +36,11 @@ checkScriptParams() {
 
     if [ -z "$LOGFILEERROR" ]; then
        echo "Empty LOGFILEERROR";
+       exit 1
+    fi
+
+    if [ -z "$LIST_WORKERS" ]; then
+       echo "Empty LIST_WORKERS";
        exit 1
     fi
 }
