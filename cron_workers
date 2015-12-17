@@ -7,22 +7,18 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 checkSudo
 checkScriptParams
 
-for processName in "$LIST_WORKERS"
-do
-    PROCESS_RUN=0
-    PROCESS_COUNTER=$(getProcessCounter $processName)
-
-    if [ -z "$PROCESS_COUNTER" ]
-    then
-        startBashCommand "$processName"
+for process_name in "$LIST_WORKERS"; do
+  process_run=0
+  process_counter=$(getProcessCounter $process_name)
+  if [ -z "$process_counter" ]; then
+    startBashCommand "$process_name"
+  else
+    if [[ $process_counter -gt 1 ]]; then
+      startBashCommand "$process_name"
     else
-        if [[ $PROCESS_COUNTER -gt 1 ]]
-        then
-            startBashCommand "$processName"
-        else
-            killProcess $processName
-            msg "$processName running."
-        fi
+      killProcess $process_name
+      msg "$process_name running."
     fi
+  fi
 done
 
