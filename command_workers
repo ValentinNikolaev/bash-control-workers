@@ -8,59 +8,58 @@ checkSudo
 checkScriptParams
 
 commandList() {
-    echo "SUDO REQUIRED!!!"
-    echo "Command list:"
-    echo "kall - Kill all workers and command disatcher"
-    echo "krecievers - Kill reciever workers"
-    echo "ksenders - Kill sender workers"
-    echo "kupdaters - Kill updaters workers"
-    echo "kdispatcher - Kill command dispatcher"
-    echo "restart - restart workers"
-    echo "ps - get workers list"
-    echo "rabbit_lq - equialent for rabbitmqctl list_queues"
-    echo "rabbit_restart - equialent for  service rabbitmq-server restart"
+  echo "SUDO REQUIRED!!!"
+  echo "Command list:"
+  echo "kall - Kill all workers and command disatcher"
+  echo "krecievers - Kill reciever workers"
+  echo "ksenders - Kill sender workers"
+  echo "kupdaters - Kill updaters workers"
+  echo "kdispatcher - Kill command dispatcher"
+  echo "restart - restart workers"
+  echo "ps - get workers list"
+  echo "rabbit_lq - equialent for rabbitmqctl list_queues"
+  echo "rabbit_restart - equialent for  service rabbitmq-server restart"
 }
 
-if [ -z "$1" ]
-   then
-        commandList
-   exit 1
+if [ -z "$1" ]; then
+    commandList
+  exit 1
 fi
 
 case "$1" in
-               "kall")
-                    killProcess "queuemail"
-                    killProcess "queue_workers"
-                    ;;
-               "krecievers")
-                    killProcess "queuemailreceiver"
-                    ;;
-               "ksenders")
-                     killProcess "queuemailsender"
-                     ;;
-               "kupdaters")
-                     killProcess "queuemailupdaterstatus"
-                     ;;
-               "ps")
-                     ps aux | grep 'console.php' | grep -v 'grep'
-                     ;;
-               "rabbit_lq")
-                     rabbitmqctl list_queues
-                     ;;
-               "rabbit_lq")
-                     service rabbitmq-server restart
-                     ;;
-               "kdispatcher")
-                     killProcess "queue_workers"
-                     ;;
-               "restart")
-                      killProcess "queuemail"
-                      killProcess "queue_workers"
-                      startBashCommand "queue_workers"
-                     ;;
-               *)
-                     commandList
-                     ;;
-            esac
+  "kall")
+    killProcess "queuemail"
+    killProcess "queue_workers"
+    ;;
+  "krecievers")
+    killProcess "queuemailreceiver"
+    ;;
+  "ksenders")
+    killProcess "queuemailsender"
+    ;;
+  "kupdaters")
+     killProcess "queuemailupdaterstatus"
+     ;;
+  "ps")
+     ps aux | grep 'console.php' | grep -v 'grep'
+     ;;
+  "rabbit_lq")
+    rabbitmqctl list_queues
+    ;;
+  "rabbit_lq")
+    service rabbitmq-server restart
+    ;;
+  "kdispatcher")
+    killProcess "queue_workers"
+    ;;
+  "restart")
+    killProcess "queuemail"
+    killProcess "queue_workers"
+    startBashCommand "queue_workers"
+    ;;
+  *)
+    commandList
+    ;;
+esac
 
 
