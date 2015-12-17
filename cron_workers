@@ -21,7 +21,7 @@ do
             startBashCommand "$processName"
         else
             killProcess $processName
-            echo "$processName running."
+            msg "$processName running."
         fi
     fi
 done
