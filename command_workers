@@ -1,13 +1,6 @@
 #!/bin/bash
 
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/conf.sh"
-
-checkSudo
-checkScriptParams
-
-commandList() {
+command_list() {
   echo "SUDO REQUIRED!!!"
   echo "Command list:"
   echo "kall - Kill all workers and command disatcher"
@@ -21,8 +14,15 @@ commandList() {
   echo "rabbit_restart - equialent for  service rabbitmq-server restart"
 }
 
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/conf.sh"
+
+checkSudo
+checkScriptParams
+
 if [ -z "$1" ]; then
-    commandList
+    command_list
   exit 1
 fi
 
@@ -58,7 +58,7 @@ case "$1" in
     startBashCommand "queue_workers"
     ;;
   *)
-    commandList
+    command_list
     ;;
 esac
 
