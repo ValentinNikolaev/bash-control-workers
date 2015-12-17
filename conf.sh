@@ -102,6 +102,6 @@ killProcess() {
     fi
 }
 
-err() {
+msg() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" >&2
 }
