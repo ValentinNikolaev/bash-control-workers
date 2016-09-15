@@ -12,9 +12,9 @@ msg() {
 # Globals:
 #   SUDO_COMMAND
 # Arguments:
-#   None
+#   No
 # Returns:
-#   None
+#   Nothing
 #######################################
 
 check_sudo() {
@@ -37,9 +37,9 @@ check_sudo() {
 #   LOGFILEERROR
 #   LIST_WORKERS
 # Arguments:
-#   None
+#   No
 # Returns:
-#   None
+#   Nothing
 #######################################
 
 check_script_params() {
@@ -76,7 +76,7 @@ check_script_params() {
 # Arguments:
 #   worker name (process name need to start)
 # Returns:
-#   None
+#   Nothing
 #######################################
 
 start_bash_command() {
@@ -124,7 +124,7 @@ get_process_counter() {
 # Arguments:
 #   process name to kill
 # Returns:
-#   None
+#   Nothing
 #######################################
 kill_process() {
   if [ -z "$1" ]; then
