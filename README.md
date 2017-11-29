@@ -1,4 +1,4 @@
-Pet project. Bash script which control workers processes via cron and script to manage exist workers
+Simple cron/bash analog of supervisor for common prposes
 
 ## toDo
 fix Sudo issue
